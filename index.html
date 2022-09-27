@@ -1,0 +1,122 @@
+<style>
+    body {
+      background-color: rgb(54, 54, 54);
+      border: none;
+      color: white;
+      padding: 15px 32px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 4px 2px;
+      cursor: pointer;
+    }
+    
+    #input {
+        width: 400px;
+        background-color: rgb(29, 29, 29);
+        border: none;
+        color: white;
+        padding: 4px;
+        font-size: 16px;
+        text-align: center;
+        border-radius: 8px;
+        margin: 4px;
+    }
+
+    #btn {
+        width: 400px;
+        background-color: rgb(194, 194, 194);
+        margin: 4px;
+        color: rgb(0, 0, 0);
+        padding: 4px;
+        font-size: 16px;
+        border-radius: 8px;
+    }
+
+    #center {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-top: -50px;
+        margin-left: -50px;
+        width: 400px;
+        height: 400px;
+    }
+
+</style>
+
+<body>
+    <div id="center">
+        <input type="text" value="" id="input">
+        <button id="btn" onclick="Copy()">Copy to Clipboard</button>
+        <!--<button id="btn" onclick="SendToMoVR()">Send To MoVR - Experimental</button>-->
+    </div>
+</body>
+
+<script>
+    var figma_app_id = "vw1rmA4cyryWGVTBxMmUvj";
+    var figma_app_client_secret = "2Jc2xICdK96wuLNt31cSDm94dNAkgo";
+    //var figma_callback_webpage = "https://pages.ghe.oculus-rep.com/design/FigmaUnity/appAuth/movr_callback";
+    var figma_callback_webpage = "https://pages.github.com/FigmaUnity";
+    
+/*    var oculus_app_id = "4333230386694410";
+    var oculus_app_credentials = "OC|4333230386694410|b1b46896e2ca43b1821d422560b83a72";
+    var oculus_destination_api_name = "Figma_token";*/
+
+    var oculus_app_id = "3873513456049303";
+    var oculus_app_credentials = "OC|3873513456049303|1b5fb94821f550643b311359a2188aa8";
+    var oculus_destination_api_name = "FigmaAuthentication";
+    
+    var text = document.getElementById("input");
+    var p = new URLSearchParams(window.location.search);
+    var code = p.get('code')
+    var x = new XMLHttpRequest()
+    var token = "";
+
+
+    x.onreadystatechange = function() {
+        if (x.status === 0 || (200 >= x.status && x.status < 400)) {
+            var obj = JSON.parse(this.responseText);
+            text.value = obj.access_token;
+            token = obj.access_token;
+        } else {
+            text.value = "Error!";
+        }
+    };
+
+
+    x.open("POST", "https://www.figma.com/api/oauth/token", true);
+    x.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    x.send("client_id=" + figma_app_id + "&client_secret=" + figma_app_client_secret + "&redirect_uri=" + figma_callback_webpage + "&grant_type=authorization_code&code=" + code);
+
+    function Copy() {
+        text.select();
+        document.execCommand("copy");
+    }
+
+    function SendToMoVR() {
+        var forwardToken_httpReq = new XMLHttpRequest()
+
+        forwardToken_httpReq.onreadystatechange = function() {
+            if (forwardToken_httpReq.status === 0 || (200 >= forwardToken_httpReq.status && forwardToken_httpReq.status < 400)) {
+                var obj = JSON.parse(this.responseText)
+                var deepLink_url = obj.url;
+                //text.value = deepLink_url;
+                window.open(deepLink_url);
+                //window.location.href = deepLink_url;
+
+            } else {
+                text.value = "Error!";
+            }
+        };
+
+
+        forwardToken_httpReq.open("POST", "https://graph.oculus.com/"+ oculus_app_id +"/app_deeplink_public", true);
+        forwardToken_httpReq.setRequestHeader("Content-type", "application/x-www-form-urlencoded");     
+        forwardToken_httpReq.send("access_token="+ oculus_app_credentials + "&destination_api_name="+ oculus_destination_api_name + "&create_room=true&deeplink_message_override=" + token +"&fields=url");
+    }
+    
+
+    
+</script>
