@@ -86,7 +86,7 @@
     };
 
 
-    x.open("POST", "https://api.figma.com/v1/oauth/token", true);
+    x.open("POST", "https://api.figma.com/v1/oauth/refresh", true);
     x.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     x.send("client_id=" + figma_app_id + "&client_secret=" + figma_app_client_secret + "&redirect_uri=" + figma_callback_webpage + "&grant_type=authorization_code&code=" + code);
 
