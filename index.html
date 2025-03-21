@@ -57,12 +57,10 @@
 <script>
     var figma_app_id = "vw1rmA4cyryWGVTBxMmUvj";
     var figma_app_client_secret = "2Jc2xICdK96wuLNt31cSDm94dNAkgo";
-    //var figma_callback_webpage = "https://pages.ghe.oculus-rep.com/design/FigmaUnity/appAuth/movr_callback";
     var figma_callback_webpage = "https://chayanvinayak.github.io/figmaUnity/";
-    
-/*    var oculus_app_id = "4333230386694410";
-    var oculus_app_credentials = "OC|4333230386694410|b1b46896e2ca43b1821d422560b83a72";
-    var oculus_destination_api_name = "Figma_token";*/
+
+    var clientCredentials = figma_app_id + ":" + figma_app_client_secret;
+    var encodedCredentials = base64Encode(clientCredentials);
 
     var oculus_app_id = "3873513456049303";
     var oculus_app_credentials = "OC|3873513456049303|1b5fb94821f550643b311359a2188aa8";
@@ -89,6 +87,7 @@
 
     x.open("POST", "https://api.figma.com/v1/oauth/token", true);
     x.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    x.setRequestHeader("Authorization", "Basic " + encodedCredentials);
     x.send("client_id=" + figma_app_id + "&client_secret=" + figma_app_client_secret + "&redirect_uri=" + figma_callback_webpage + "&grant_type=authorization_code&code=" + code);
 
     function Copy() {
