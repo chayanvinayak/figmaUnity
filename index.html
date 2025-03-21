@@ -61,10 +61,6 @@
 
     var clientCredentials = figma_app_id + ":" + figma_app_client_secret;
     var encodedCredentials = base64Encode(clientCredentials);
-
-    var oculus_app_id = "3873513456049303";
-    var oculus_app_credentials = "OC|3873513456049303|1b5fb94821f550643b311359a2188aa8";
-    var oculus_destination_api_name = "FigmaAuthentication";
     
     var text = document.getElementById("input");
     var p = new URLSearchParams(window.location.search);
@@ -97,7 +93,6 @@
         console.error("Failed to encode client credentials.");
     }
 
-
     function base64Encode(str) {
         try {
             return btoa(unescape(encodeURIComponent(str)));
@@ -111,29 +106,5 @@
         text.select();
         document.execCommand("copy");
     }
-
-    function SendToMoVR() {
-        var forwardToken_httpReq = new XMLHttpRequest()
-
-        forwardToken_httpReq.onreadystatechange = function() {
-            if (forwardToken_httpReq.status === 0 || (200 >= forwardToken_httpReq.status && forwardToken_httpReq.status < 400)) {
-                var obj = JSON.parse(this.responseText)
-                var deepLink_url = obj.url;
-                //text.value = deepLink_url;
-                window.open(deepLink_url);
-                //window.location.href = deepLink_url;
-
-            } else {
-                text.value = "Error!";
-            }
-        };
-
-
-        forwardToken_httpReq.open("POST", "https://graph.oculus.com/"+ oculus_app_id +"/app_deeplink_public", true);
-        forwardToken_httpReq.setRequestHeader("Content-type", "application/x-www-form-urlencoded");     
-        forwardToken_httpReq.send("access_token="+ oculus_app_credentials + "&destination_api_name="+ oculus_destination_api_name + "&create_room=true&deeplink_message_override=" + token +"&fields=url");
-    }
-    
-
     
 </script>
